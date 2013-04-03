@@ -36,3 +36,19 @@ data packets with flag bytes, data stuffing, and CRC 16 error checking.
 
 For further details on usage of either the Arduino libraries or python 
 modules see README files inside subfolders.
+
+Additional Details
+-------------------
+If memory is a concern then the framed data output buffer should be customized. 
+It is currently set to be 'framed_data[1000]' in "void Framing::sendFramedData(byte* data, int length)". 
+This can conservatively be set to a value which is equal to (2*length_outbound_data + 8 ). 
+The value (2*length_outbound_data + 8 ) is chosen for the worst case where all data to be sent equals 
+DLE and both CRC values equal DLE.
+
+The packet is structured as follows: [DLE] [STX] [Stuffed Data] [Stuffed CRC16] [DLE] [ETX]
+
+Stuffing refers to adding an additional DLE character before any DLE that appears in the data to be 
+sent or in the calculated CRC.
+
+The CRC is calculated before byte stuffing occurs, or on the receiving end it is calculated after 
+the data has been unstuffed.

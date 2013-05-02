@@ -1,4 +1,4 @@
-This is Arduino library for Framing version 1.0
+This is Arduino library for Framing version 1.1
 ================================================
 Copyright (C) 2013 Graeme Wilson <gnw.wilson@gmail.com>
 
@@ -54,7 +54,7 @@ To receive an array of data of type 'byte' send the following command:
 Example Implementation
 -----------------------
 
-#include "framing.h"
+#include "Framing.h"
 
 Framing framing;
 
@@ -64,8 +64,8 @@ void setup() {
 }
 
 void loop() {
-  byte input_buff[100]={0};
-  byte output_buff[100]={0};
+  byte input_buff[100];
+  byte output_buff[100];
   int output_length, input_length, crc_valid;
 
   output_buff[0]=0;

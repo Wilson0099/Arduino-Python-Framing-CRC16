@@ -14,14 +14,12 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
-	Last Modified: 1 Apr 2013 06:51 GMT
 */
 
 #include <Arduino.h>
 
-#ifndef timer_h
-#define timer_h
+#ifndef Timer_h
+#define Timer_h
 
 class Timer
 {

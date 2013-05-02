@@ -1,4 +1,4 @@
-This is Framing version 1.0
+This is Framing version 1.1
 ============================
 Copyright (C) 2013 Graeme Wilson <gnw.wilson@gmail.com>
 
@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contents of Project
 --------------------
 This project contains three parts:
--Arduino Due framing library
 -Arduino framing library
 -Python Framing modules
 
@@ -30,7 +29,7 @@ This project contains three parts:
 Usage of Project
 -----------------
 This project is designed to be used to provide a protocol for communication
-between and Arduino (or Arduino DUE) and python. The included source files
+between an Arduino and python. The included source files
 provide the necessary objects that can be used in your projects to send
 data packets with flag bytes, data stuffing, and CRC 16 error checking.
 
@@ -40,7 +39,7 @@ modules see README files inside subfolders.
 Additional Details
 -------------------
 If memory is a concern then the framed data output buffer should be customized. 
-It is currently set to be 'framed_data[1000]' in "void Framing::sendFramedData(byte* data, int length)". 
+It is currently set to be 'framed_data[100]' in "void Framing::sendFramedData(byte* data, int length)". 
 This can conservatively be set to a value which is equal to (2*length_outbound_data + 8 ). 
 The value (2*length_outbound_data + 8 ) is chosen for the worst case where all data to be sent equals 
 DLE and both CRC values equal DLE.

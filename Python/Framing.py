@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
-	Last Modified: 1 Apr 2013 07:21 GMT
 """
 
 import array as arr
@@ -65,19 +64,19 @@ class Framing(object):
         CRC=createCRC.returnCRC_reset()
         
         #Send CRC with byte stuffing
-        framed_data.append((CRC>>8)&0xff)
-        buf_index+=1
-        
-        if(framed_data[buf_index-1]==self.__DLE):
+        if (((CRC>>8)&0xff)==self.__DLE):
             framed_data.append(self.__DLE)
             buf_index+=1
         
-        framed_data.append(CRC&0xff)
+        framed_data.append((CRC>>8)&0xff)
         buf_index+=1
         
-        if(framed_data[buf_index-1]==self.__DLE):
+        if ((CRC&0xff)==self.__DLE):
             framed_data.append(self.__DLE)
-            buf_index+=1;
+            buf_index+=1         
+        
+        framed_data.append(CRC&0xff)
+        buf_index+=1
 
         #Send end flag
         framed_data.append(self.__DLE)
@@ -89,10 +88,9 @@ class Framing(object):
         for i in range(0,buf_index,1):
             serial.write(chr(framed_data[i]))
     
-    def receiveFramedData(self, serial):
-        data=arr.array('B',[])
-        
+    def receiveFramedData(self, data, serial):       
         checkCRC=CRC_16.CRC_16()
+        length=0
 
         t_start=time.time()
         while((time.time()-t_start)<self.__timeout):
@@ -109,22 +107,24 @@ class Framing(object):
                                     newByte=struct.unpack('B',serial.read(1))[0]
                                     if(newByte==self.__DLE):
                                         if(oldByte==self.__DLE):
-                                            data.append(newByte)
+                                            data[length]=newByte
+                                            length+=1
                                             newByte=0
                                         else:
                                             pass
                                     else:
-                                        data.append(newByte)
-                            data.pop()
-                            for i in range(0,len(data),1):
+                                        data[length]=newByte
+                                        length+=1
+                            length-=3
+                            
+                            for i in range(0,length+2,1):
                                 checkCRC.next_databyte(data[i])
-                            data.pop()
-                            data.pop()
+                                  
                             if(checkCRC.returnCRC_reset()==0):
-                                return data
+                                return 1, length
                             else:
-                                return -1
-        return 0
+                                return -1, length
+        return 0, length
             
             
                 

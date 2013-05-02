@@ -14,8 +14,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
-	Last Modified: 1 Apr 2013 06:53 GMT
 */
 
 #include <Arduino.h>
@@ -26,10 +24,8 @@
 class CRC_16
 {
   private:
-    //Create CRC_16 lookup table for 0x8005
-    static const short m_CRC_16_lookuptable [256];
-     
-    short m_remainder;
+    unsigned long m_remainder;
+	static const unsigned long m_crc;
     
   public:
     //Constructor

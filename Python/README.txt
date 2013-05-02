@@ -1,4 +1,4 @@
-This is Python library for Framing version 1.0
+This is Python library for Framing version 1.1
 ================================================
 Copyright (C) 2013 Graeme Wilson <gnw.wilson@gmail.com>
 
@@ -31,17 +31,19 @@ To set timeout for sending or receiving framed data send the following command:
 
 To send an array of data of type 'byte' send the following command:
 
-   framing.sendFramedData(data,length,serial);
+   framing.sendFramedData(data, length, serial)
       *Note: 'data' is a array of type 'byte' (ie. array('B',[]))
       *Note: 'length' is the # of elements to send from 'data' array
       *Note: 'serial' is the serial object opened by pyserial module
 
 To receive an array of data of type 'byte' send the following command:
 
-   framing.receiveFramedData(serial);
+   framing.receiveFramedData(data, serial)
+	  *Note: 'data' is a array of type 'byte' (ie. array('B',[]))
       *Note: 'serial' is the serial object opened by pyserial module
-      *Note: either returns data, the value -1 (CRC didn't match, or timeout mid stream) 
-         or 0 (for timeout before first byte)
+      *Note: returns a tuple in the form (result, length)
+	  *Note: 'result' returns 1 for success, 0 for timeout, -1 for crc error
+	  *Note: 'length' returns the length of the data returned
 
 
 Example Implementation
@@ -49,6 +51,10 @@ Example Implementation
 
 import Framing
 import serial
+import numpy as np
+
+data = np.zeros((100,),dtype=np.uint8)
+
 framing=Framing.Framing()
 
 ser=serial.Serial("Com1",9600,timeout=0.1)
@@ -57,7 +63,7 @@ time.sleep(2)
 framing.sendFramedData([1,2,3],3,ser)
 #the values 1, 2, 3 have been sent through serial
 
-data=framing.receiveFramedData(ser)
+result, length = framing.receiveFramedData(data, ser)
 #the input buffer has been filled with incoming serial data
 
 

@@ -1,11 +1,6 @@
 """ 
 	CRC_16.py - Python module for calculating CRC 16
 	Copyright (C) 2013 Graeme Wilson <gnw.wilson@gmail.com>
-	
-	This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,7 +10,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
-	Last Modified: 1 Apr 2013 07:21 GMT
 """
 
 import array as arr

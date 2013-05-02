@@ -14,8 +14,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
-	Last Modified: 1 Apr 2013 07:55 GMT
 */
 
 #include <Arduino.h>
@@ -27,7 +25,7 @@ class Framing
 {
   private:
     static const byte m_STX, m_ETX, m_DLE;
-	double m_timeout;
+    double m_timeout;
   public:
     Framing();
     

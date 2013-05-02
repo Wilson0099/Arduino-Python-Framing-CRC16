@@ -1,5 +1,5 @@
 /*	
-	Framing.cpp - Arduino data framing using flags, byte stuffing, and CRC 16
+	Framing.cpp - Arduino Due data framing using flags, byte stuffing, and CRC 16
 	Copyright (C) 2013 Graeme Wilson <gnw.wilson@gmail.com>
 	
 	This program is free software: you can redistribute it and/or modify
@@ -14,8 +14,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
-	Last Modified: 1 Apr 2013 07:55 GMT
 */
 
 #include <Arduino.h>
@@ -41,7 +39,7 @@ void Framing::setTimout(double timeout) {
 //Public method for framing data
 void Framing::sendFramedData(byte* data, int length) {
   int buf_index=0;
-  byte framed_data[1000];
+  byte framed_data[100];
   
   CRC_16 createCRC;
   
@@ -92,7 +90,7 @@ void Framing::sendFramedData(byte* data, int length) {
   framed_data[buf_index]=m_ETX;
   buf_index++;
   
-  Serial.write(framed_data,buf_index);
+  Serial.write(framed_data, buf_index);
 }
 
 //Public method for unframing and returning data

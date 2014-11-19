@@ -93,6 +93,62 @@ void Framing::sendFramedData(byte* data, int length) {
   Serial.write(framed_data, buf_index);
 }
 
+void Framing::sendFramedDataSerial1(byte* data, int length) {
+    int buf_index=0;
+    byte framed_data[100];
+
+    CRC_16 createCRC;
+
+    //Send start flag
+    framed_data[buf_index]=m_DLE;
+    buf_index++;
+    framed_data[buf_index]=m_STX;
+    buf_index++;
+
+    //Send data with byte stuffing - Also calculate CRC (ignore stuffing)
+    for (int i=0; i<length; i++) {
+        if(data[i]==m_DLE) {
+
+            framed_data[buf_index]=m_DLE;
+            buf_index++;
+
+            framed_data[buf_index]=data[i];
+            buf_index++;
+            createCRC.next_databyte(data[i]);
+        }
+        else {
+            framed_data[buf_index]=data[i];
+            buf_index++;
+            createCRC.next_databyte(data[i]);
+        }
+    }
+
+    //Return CRC
+    short CRC=createCRC.returnCRC_reset();
+
+    //Send CRC with byte stuffing
+    framed_data[buf_index]=byte((CRC>>8)&0xff);
+    buf_index++;
+    if(framed_data[buf_index-1]==m_DLE) {
+        framed_data[buf_index]=m_DLE;
+        buf_index++;
+    }
+    framed_data[buf_index]=byte(CRC&0xff);
+    buf_index++;
+    if(framed_data[buf_index-1]==m_DLE) {
+        framed_data[buf_index]=m_DLE;
+        buf_index++;
+    }
+
+    //Send end flag
+    framed_data[buf_index]=m_DLE;
+    buf_index++;
+    framed_data[buf_index]=m_ETX;
+    buf_index++;
+
+    Serial1.write(framed_data, buf_index);
+}
+
 //Public method for unframing and returning data
 //Returns 1 if CRC valid, 0 if no data was found, and -1 if invalid CRC was calculated
 void Framing::receiveFramedData(byte* data, int& length, int& crc_valid) {
@@ -146,4 +202,57 @@ void Framing::receiveFramedData(byte* data, int& length, int& crc_valid) {
 			}
 		}
 	}		
+}
+
+void Framing::receiveFramedDataSerial1(byte* data, int& length, int& crc_valid) {
+    byte newByte, oldByte;
+    crc_valid=0;
+
+    CRC_16 checkCRC;
+    Timer timeout;
+
+    timeout.start();
+    while(timeout.read_s()<m_timeout) {
+        if(Serial1.available()>0) {
+            newByte=Serial.read();
+            while(timeout.read_s()<m_timeout) {
+                if(Serial1.available()>0) {
+                    oldByte=newByte;
+                    newByte=Serial1.read();
+                    if((oldByte==m_DLE) & (newByte==m_STX)) {
+                        int data_index=0;
+                        while((timeout.read_s()<m_timeout) & ~((oldByte==m_DLE) & (newByte==m_ETX))) {
+                            if(Serial1.available()>0) {
+                                oldByte=newByte;
+                                newByte=Serial1.read();
+                                if(newByte==m_DLE) {
+                                    if(oldByte==m_DLE) {
+                                        data[data_index]=newByte;
+                                        data_index++;
+                                        newByte=0;
+                                    }
+                                }
+                                else {
+                                    data[data_index]=newByte;
+                                    data_index++;
+                                }
+                            }
+                        }
+                        length=data_index-3;
+                        for(int i=0; i<length+2; i++) {
+                            checkCRC.next_databyte(data[i]);
+                        }
+                        if(checkCRC.returnCRC_reset()==0x00) {
+                            crc_valid=1;
+                            return;
+                        }
+                        else {
+                            crc_valid=-1;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -32,6 +32,8 @@ class Framing
     void setTimout(double timeout); //Set timeout for serial communication
     void sendFramedData(byte* data, int length); //Frame data with flag and byte stuffing
     void receiveFramedData(byte* data, int& length, int& crc_valid); //Receive framed data through serial and unframe it
+    void sendFramedDataSerial1(byte* data, int length); //Frame data with flag and byte stuffing
+    void receiveFramedDataSerial1(byte* data, int& length, int& crc_valid); //Receive framed data through serial and unframe it
 };
 
 #endif

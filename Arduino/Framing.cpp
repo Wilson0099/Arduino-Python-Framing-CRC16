@@ -93,6 +93,7 @@ void Framing::sendFramedData(byte* data, int length) {
   Serial.write(framed_data, buf_index);
 }
 
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 void Framing::sendFramedDataSerial1(byte* data, int length) {
     int buf_index=0;
     byte framed_data[100];
@@ -148,6 +149,7 @@ void Framing::sendFramedDataSerial1(byte* data, int length) {
 
     Serial1.write(framed_data, buf_index);
 }
+#endif
 
 //Public method for unframing and returning data
 //Returns 1 if CRC valid, 0 if no data was found, and -1 if invalid CRC was calculated
@@ -204,6 +206,7 @@ void Framing::receiveFramedData(byte* data, int& length, int& crc_valid) {
 	}		
 }
 
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 void Framing::receiveFramedDataSerial1(byte* data, int& length, int& crc_valid) {
     byte newByte, oldByte;
     crc_valid=0;
@@ -256,3 +259,4 @@ void Framing::receiveFramedDataSerial1(byte* data, int& length, int& crc_valid) 
         }
     }
 }
+#endif
